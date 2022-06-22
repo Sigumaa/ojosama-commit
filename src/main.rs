@@ -1,19 +1,36 @@
+use serde_json::json;
+use std::collections::BTreeMap;
 use std::{process::Command, str::FromStr};
-
 #[derive(Debug)]
 struct Arguments {
     message: String,
 }
 
-fn main() {
+//コードが汚いので綺麗にする。
+#[tokio::main]
+async fn main() -> reqwest::Result<()> {
     let args = parse_args();
-    let commit_message = args.message;
+    let message = args.message;
+
+    let post_body = json!({ "Text": message });
+    let client = reqwest::Client::new();
+    let res = client
+        .post("https://ojosama.herokuapp.com/api/ojosama")
+        .json(&post_body)
+        .send()
+        .await?
+        .text()
+        .await?;
+    let res_text: BTreeMap<String, String> = serde_json::from_str(&res).expect("error");
+    let commit_message = res_text.get("Result").expect("error");
     Command::new("git")
         .arg("commit")
         .arg("-m")
         .arg(commit_message)
         .spawn()
         .expect("failed to start `git commit`");
+
+    Ok(())
 }
 
 fn parse_args() -> Arguments {
@@ -36,3 +53,5 @@ fn parse_args() -> Arguments {
         message: args[0].to_string(),
     }
 }
+
+//しぐま
