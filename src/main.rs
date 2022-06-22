@@ -53,5 +53,3 @@ fn parse_args() -> Arguments {
         message: args[0].to_string(),
     }
 }
-
-//しぐま
