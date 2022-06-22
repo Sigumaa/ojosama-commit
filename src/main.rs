@@ -1,6 +1,7 @@
 use serde_json::json;
 use std::collections::BTreeMap;
 use std::{process::Command, str::FromStr};
+
 #[derive(Debug)]
 struct Arguments {
     message: String,
@@ -10,9 +11,10 @@ struct Arguments {
 #[tokio::main]
 async fn main() -> reqwest::Result<()> {
     let args = parse_args();
-    let message = args.message;
 
+    let message = args.message;
     let post_body = json!({ "Text": message });
+
     let client = reqwest::Client::new();
     let res = client
         .post("https://ojosama.herokuapp.com/api/ojosama")
@@ -21,14 +23,18 @@ async fn main() -> reqwest::Result<()> {
         .await?
         .text()
         .await?;
-    let res_text: BTreeMap<String, String> = serde_json::from_str(&res).expect("error");
-    let commit_message = res_text.get("Result").expect("error");
+    let res_text: BTreeMap<String, String> =
+        serde_json::from_str(&res).expect("帰ってきたデータの処理に失敗してしまいましたわ。");
+
+    let commit_message = res_text
+        .get("Result")
+        .expect("メッセージを取り出すのに失敗してしまいましたわ。");
     Command::new("git")
         .arg("commit")
         .arg("-m")
         .arg(commit_message)
         .spawn()
-        .expect("failed to start `git commit`");
+        .expect("`git commit`に失敗してしまいましたわ。");
 
     Ok(())
 }
@@ -37,15 +43,15 @@ fn parse_args() -> Arguments {
     let mut args = Vec::new();
 
     for arg in std::env::args().skip(1) {
-        args.push(String::from_str(&arg).expect("error parsing arguments"));
+        args.push(String::from_str(&arg).expect("引数のパースに失敗してしまいましたわ。"));
     }
 
     if args.len() != 1 {
         eprintln!(
-            "Error: wrong number of argsments: expected 1, got {}.",
+            "引数の数が間違っておりますわ。　引数の数は1個であってほしいですわ。　実際の引数の数は {} 個でしたわ。.",
             args.len()
         );
-        eprintln!(r#"Try using """#);
+        eprintln!(r#"ダブルクオーテーション "" で メッセージを囲ってみてくださいまし。"#);
         std::process::exit(1);
     };
 
