@@ -394,7 +394,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ojosama-commit"
+name = "ojo"
 version = "0.1.0"
 dependencies = [
  "reqwest",
