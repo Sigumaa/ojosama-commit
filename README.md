@@ -20,6 +20,20 @@ commit message を ojosama 風に変換して commit いたしますわ～！
 
 本プログラムを使う場合も上記ガイドラインを守ってお使いください。
 
+## 使い方
+
+```bash
+$ ojo "何かしらのコミットしたいメッセージですわ！"
+```
+
+## インストール
+
+このリポジトリを clone して、以下のコマンドを実行してください。
+
+```bash
+$ cargo install --path .
+```
+
 ## 感謝
 
 このプログラムは[jiro4989](https://github.com/jiro4989)さんの[ojosama](https://github.com/jiro4989/ojosama)、および[Ojosama Web API](https://github.com/jiro4989/ojosama-web)を使用しています。
