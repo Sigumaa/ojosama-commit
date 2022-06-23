@@ -28,7 +28,7 @@ async fn main() -> ExitCode {
         .await
         .expect("テキストをレスポンスから抽出できませんでしたわ。");
     let res_text: HashMap<String, String> =
-        serde_json::from_str(&res).expect("帰ってきたデータの処理に失敗してしまいましたわ。");
+        serde_json::from_str(&res).expect("かえってきたデータの処理に失敗してしまいましたわ。");
 
     let commit_message = res_text
         .get("Result")
