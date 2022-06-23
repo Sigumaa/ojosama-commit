@@ -19,9 +19,11 @@ async fn main() -> reqwest::Result<()> {
         .post("https://ojosama.herokuapp.com/api/ojosama")
         .json(&post_body)
         .send()
-        .await?
+        .await
+        .expect("リクエストに失敗してしまいましたわ。")
         .text()
-        .await?;
+        .await
+        .expect("テキストをレスポンスから抽出できませんでしたわ。");
     let res_text: HashMap<String, String> =
         serde_json::from_str(&res).expect("帰ってきたデータの処理に失敗してしまいましたわ。");
 
