@@ -1,15 +1,18 @@
 use serde_json::json;
 use std::collections::HashMap;
-use std::{process::Command, str::FromStr};
+use std::process::Command;
+use std::process::ExitCode;
 #[derive(Debug)]
 struct Arguments {
     message: String,
 }
 
-//コードが汚いので綺麗にする。
 #[tokio::main]
-async fn main() -> reqwest::Result<()> {
-    let args = parse_args();
+async fn main() -> ExitCode {
+    let args = match parse_args() {
+        Ok(o) => o,
+        Err(e) => return e,
+    };
 
     let message = args.message;
     let post_body = json!({ "Text": message });
@@ -30,33 +33,38 @@ async fn main() -> reqwest::Result<()> {
     let commit_message = res_text
         .get("Result")
         .expect("メッセージを取り出すのに失敗してしまいましたわ。");
-    Command::new("git")
+
+    let is_success = Command::new("git")
         .arg("commit")
         .arg("-m")
         .arg(commit_message)
         .spawn()
-        .expect("`git commit`に失敗してしまいましたわ。");
+        .expect("`git commit`が実行できませんでしたわ。")
+        .wait()
+        .expect("`git commit`が実行されませんでしたわ。")
+        .success();
 
-    Ok(())
+    if !is_success {
+        eprintln!("`git commit` に失敗してしまいましたわ。");
+        return ExitCode::from(1);
+    }
+
+    ExitCode::SUCCESS
 }
 
-fn parse_args() -> Arguments {
-    let mut args = Vec::new();
-
-    for arg in std::env::args().skip(1) {
-        args.push(String::from_str(&arg).expect("引数のパースに失敗してしまいましたわ。"));
-    }
+fn parse_args() -> Result<Arguments, ExitCode> {
+    let mut args = std::env::args().skip(1).collect::<Vec<_>>();
 
     if args.len() != 1 {
         eprintln!(
-            "引数の数が間違っておりますわ。　引数の数は1個であってほしいですわ。　実際の引数の数は {} 個でしたわ。",
+            "引数の数が間違っておりますわ。 引数の数は1個であってほしいですわ。 実際の引数の数は {} 個でしたわ。",
             args.len()
         );
         eprintln!(r#"ダブルクオーテーション "" で メッセージを囲ってみてくださいまし。"#);
-        std::process::exit(1);
+        return Err(ExitCode::from(1));
     };
 
-    Arguments {
-        message: args[0].to_string(),
-    }
+    Ok(Arguments {
+        message: args.remove(0),
+    })
 }
