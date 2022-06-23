@@ -1,7 +1,6 @@
 use serde_json::json;
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::{process::Command, str::FromStr};
-
 #[derive(Debug)]
 struct Arguments {
     message: String,
@@ -23,7 +22,7 @@ async fn main() -> reqwest::Result<()> {
         .await?
         .text()
         .await?;
-    let res_text: BTreeMap<String, String> =
+    let res_text: HashMap<String, String> =
         serde_json::from_str(&res).expect("帰ってきたデータの処理に失敗してしまいましたわ。");
 
     let commit_message = res_text
