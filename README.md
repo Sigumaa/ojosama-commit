@@ -51,6 +51,20 @@ $ ojo "コミットメッセージです！"
 $ cargo install --path .
 ```
 
+
+## 注意事項
+こちらを使うためにはRustがインストールされている必要がありますわ。  
+Rustについてはこちらのおページを見てインストールしてくださいまし。  
+[Rust-Lang](https://www.rust-lang.org/learn)
+
+Rustのおバージョンが古いとエラーが出て動かない可能性がありますわ。  
+そちらの場合は以下のおコマンドでRustをupdateして、再度試してみてくださいまし。  
+
+```bash
+$ rustup update
+```
+
+
 ## 感謝
 
 こちらのプログラムは[jiro4989](https://github.com/jiro4989)さんの[ojosama](https://github.com/jiro4989/ojosama)、および[Ojosama Web API](https://github.com/jiro4989/ojosama-web)を使用していますわ。
