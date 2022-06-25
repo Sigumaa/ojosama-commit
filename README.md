@@ -35,13 +35,6 @@ $ rustc -V
 rustc 1.61.0 (2022-05-18)
 ```
 
-## 使い方
-
-```bash
-$ ojo "コミットメッセージです！"
-[hoge huga000] コミットメッセージですわ～～！
- ∞ file changed, ∞ insertions(+)
-```
 
 ## インストール
 
@@ -49,6 +42,22 @@ $ ojo "コミットメッセージです！"
 
 ```bash
 $ cargo install --path .
+```
+とりあえず使ってみたいという時は、以下のおコマンドでインストールせずに実行することができますわ～‼  
+クローンしたおフォルダ内で実行してくださいまし！  
+
+```bash
+$ cargo run "コミットメッセージです！"
+[hoge huga000] コミットメッセージですわ～～！
+ ∞ file changed, ∞ insertions(+)
+```
+
+## 使い方
+
+```bash
+$ ojo "コミットメッセージです！"
+[hoge huga000] コミットメッセージですわ～～！
+ ∞ file changed, ∞ insertions(+)
 ```
 
 
