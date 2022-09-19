@@ -19,7 +19,7 @@ async fn main() -> ExitCode {
 
     let client = reqwest::Client::new();
     let res = client
-        .post("https://ojosama.herokuapp.com/api/ojosama")
+        .post("https://api.ojosama.jiro4989.com")
         .json(&post_body)
         .send()
         .await
