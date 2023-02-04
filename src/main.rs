@@ -1,8 +1,10 @@
+use serde::Serialize;
 use serde_json::json;
 use std::collections::HashMap;
 use std::process::Command;
 use std::process::ExitCode;
-#[derive(Debug)]
+
+#[derive(Debug, Serialize)]
 struct Arguments {
     message: String,
 }
@@ -10,17 +12,19 @@ struct Arguments {
 #[tokio::main]
 async fn main() -> ExitCode {
     let args = match parse_args() {
-        Ok(o) => o,
-        Err(e) => return e,
+        Ok(args) => args,
+        Err(e) => {
+            std::process::exit(e);
+        },
     };
-
-    let message = args.message;
-    let post_body = json!({ "Text": message });
 
     let client = reqwest::Client::new();
     let res = client
         .post("https://api.ojosama.jiro4989.com")
-        .json(&post_body)
+        .header("Content-Type", "application/json")
+        .json(&json!({
+            "Text": args.message,
+        }))
         .send()
         .await
         .expect("リクエストに失敗してしまいましたわ。")
@@ -32,7 +36,8 @@ async fn main() -> ExitCode {
 
     let commit_message = res_text
         .get("Result")
-        .expect("メッセージを取り出すのに失敗してしまいましたわ。");
+        .expect("APIからかえってきたデータに異常がありましたわ。");
+        
 
     let is_success = Command::new("git")
         .arg("commit")
@@ -46,14 +51,14 @@ async fn main() -> ExitCode {
 
     if !is_success {
         eprintln!("`git commit` に失敗してしまいましたわ。");
-        return ExitCode::from(1);
+        return ExitCode::FAILURE;
     }
 
     ExitCode::SUCCESS
 }
 
-fn parse_args() -> Result<Arguments, ExitCode> {
-    let mut args = std::env::args().skip(1).collect::<Vec<_>>();
+fn parse_args() -> Result<Arguments, i32> {
+    let args = std::env::args().skip(1).collect::<Vec<_>>();
 
     if args.len() != 1 {
         eprintln!(
@@ -61,10 +66,10 @@ fn parse_args() -> Result<Arguments, ExitCode> {
             args.len()
         );
         eprintln!(r#"ダブルクオーテーション "" で メッセージを囲ってみてくださいまし。"#);
-        return Err(ExitCode::from(1));
+        return Err(1);
     };
 
-    Ok(Arguments {
-        message: args.remove(0),
-    })
+    let message = args[0].clone();
+
+    Ok(Arguments { message })
 }
