@@ -24,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = parse_args()?;
     let commit_message = send_request(&args).await?;
     commit_to_git(&commit_message)?;
-//
+    
     Ok(())
 }
 
